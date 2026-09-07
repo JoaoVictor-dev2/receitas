@@ -6,10 +6,15 @@ import { AppError } from './errors/app-error.ts';
 import { handleError } from './errors/handle-error.ts';
 import { matchRoute, type Route } from './http/router.ts';
 import { sendJson, sendNoContent } from './http/response.ts';
+import { UserRepository } from './repositories/user-repository.ts';
+import { userRoutes } from './routes/user-routes.ts';
+import { UserService } from './services/user-service.ts';
 
 export function createApp(config = readConfig(), pool = createDatabasePool(config.database)) {
+  const userService = new UserService(new UserRepository(pool));
   const routes: Route[] = [
     { method: 'GET', pathname: '/health', handler: (_request, response) => sendJson(response, 200, { status: 'ok' }) },
+    ...userRoutes(userService, config.auth),
   ];
 
   const handler: RequestListener = async (request, response) => {
