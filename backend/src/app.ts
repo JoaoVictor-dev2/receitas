@@ -15,6 +15,7 @@ import { CategoryService } from './services/category-service.ts';
 import { RecipeService } from './services/recipe-service.ts';
 import { categoryRoutes } from './routes/category-routes.ts';
 import { recipeRoutes } from './routes/recipe-routes.ts';
+import { docsRoutes } from './routes/docs-routes.ts';
 
 export function createApp(config = readConfig(), pool = createDatabasePool(config.database)) {
   const userService = new UserService(new UserRepository(pool));
@@ -26,6 +27,7 @@ export function createApp(config = readConfig(), pool = createDatabasePool(confi
     ...userRoutes(userService, config.auth),
     ...categoryRoutes(categoryService, config.auth),
     ...recipeRoutes(recipeService, config.auth),
+    ...docsRoutes,
   ];
 
   const handler: RequestListener = async (request, response) => {
