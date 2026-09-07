@@ -9,12 +9,23 @@ import { sendJson, sendNoContent } from './http/response.ts';
 import { UserRepository } from './repositories/user-repository.ts';
 import { userRoutes } from './routes/user-routes.ts';
 import { UserService } from './services/user-service.ts';
+import { CategoryRepository } from './repositories/category-repository.ts';
+import { RecipeRepository } from './repositories/recipe-repository.ts';
+import { CategoryService } from './services/category-service.ts';
+import { RecipeService } from './services/recipe-service.ts';
+import { categoryRoutes } from './routes/category-routes.ts';
+import { recipeRoutes } from './routes/recipe-routes.ts';
 
 export function createApp(config = readConfig(), pool = createDatabasePool(config.database)) {
   const userService = new UserService(new UserRepository(pool));
+  const categories = new CategoryRepository(pool);
+  const categoryService = new CategoryService(categories);
+  const recipeService = new RecipeService(new RecipeRepository(pool), categories);
   const routes: Route[] = [
     { method: 'GET', pathname: '/health', handler: (_request, response) => sendJson(response, 200, { status: 'ok' }) },
     ...userRoutes(userService, config.auth),
+    ...categoryRoutes(categoryService, config.auth),
+    ...recipeRoutes(recipeService, config.auth),
   ];
 
   const handler: RequestListener = async (request, response) => {
