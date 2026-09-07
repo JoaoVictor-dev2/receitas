@@ -1,0 +1,16 @@
+**/node_modules
+**/dist
+**/coverage
+**/.env
+**/.env.*
+!**/.env.example
+.git
+**/.git
+banco
+**/test-results
+**/playwright-report
+**/.vite
+**/*.tsbuildinfo
+**/tmp
+**/*.tmp
+**/*.log
